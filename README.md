@@ -54,8 +54,8 @@ Note: You must have MySQL installed to use this application.
         * For Tags**:
             ```
             {
-                "tag_name": "Your tag name.",`\
-                "productIds": [1,2]`\
+                "tag_name": "Your tag name.",
+                "productIds": [1,2]
             }
             ```
     3. To update content, change the selection to PUT and use the same address as above, but add the id of the item you want to update to the end. For exaple if you want to update the product item with the id of 2, use the address ht<span>tp://local</span>host:3001/api/products/2”. Enter the approriate the JSON for content you want to update as in the format above. You only ned to include the parts you want to update. For example, if you want to update the price of a product you use: 
