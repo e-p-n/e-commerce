@@ -50,29 +50,24 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  Tag.update(req.body, {
-    where: {
-      id: req.params.id
-    },
-  })
+  Tag.create(req.body)
   .then((tag) => {
-    return ProductTag.findAll({ where: { tag_id: req.params.id }});
-  })
-  .then((productTags) => {
-    const productTagIds = productTags.map(({ product_id}) => product_id);
-    const newProductTags = req.body.productIds
-      .filter((product_id) => !productTagIds.includes(product_id))
-      .map((product_id) => {
+    if (req.body.productIds.length) {
+      const productTagIdArr = req.body.productIds.map((product_id) => {
         return {
           product_id,
-          tag_id: tag_id
+          tag_id: tag.id,
         };
       });
-    const productTagsToRemove = productTags
-      .filter(({ product_id
-      }))
+      return ProductTag.bulkCreate(productTagIdArr);
+    }
+    res.status(200).json(tag);
   })
-
+  .then((productTagIds) => res.status(200).json(productTagIds))
+  .catch((err) => {
+    console.log(err);
+    res.status(400).json(err);
+  });
 });
 
 router.put('/:id', (req, res) => {
@@ -86,15 +81,15 @@ router.put('/:id', (req, res) => {
       return ProductTag.findAll({ where: { tag_id: req.params.id } });
     })
     .then((productTags) => {
-      // get list of current tag_ids
+      // get list of current product_ids
       const productTagIds = productTags.map(({ product_id }) => product_id);
-      // create filtered list of new tag_ids
+      // create filtered list of new product_ids
       const newProductTags = req.body.productIds
         .filter((product_id) => !productTagIds.includes(product_id))
         .map((product_id) => {
           return {
             product_id,
-            tag_id: tag_id,
+            tag_id: req.params.id,
           };
         });
       // figure out which ones to remove
